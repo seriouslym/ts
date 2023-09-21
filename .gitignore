@@ -10,6 +10,6 @@ package-lock.json
 .idea
 .vscode
 autoTag.py
-test
-dist
+test/
+dist/
 SingleInput.txt
