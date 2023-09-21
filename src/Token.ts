@@ -1,4 +1,4 @@
-import {Type} from "./Type";
+import {Type} from "./Constants";
 
 export default class Token {
     type: Type;

@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var Type_1 = require("./Type");
+var Constants_1 = require("./Constants");
 var Lexer_1 = require("./Lexer");
 var Parser_1 = require("./Parser");
 var NodeVisitor_1 = require("./NodeVisitor");
@@ -33,25 +33,43 @@ var Interpreter = /** @class */ (function (_super) {
         return this.visit(root);
     };
     Interpreter.prototype.visitBinOp = function (root) {
-        if (root.token.type === Type_1.Type.MINUS) {
+        if (root.token.type === Constants_1.Type.MINUS) {
             return this.visit(root.left) - this.visit(root.right);
         }
-        else if (root.token.type === Type_1.Type.PLUS) {
+        else if (root.token.type === Constants_1.Type.PLUS) {
             return this.visit(root.left) + this.visit(root.right);
         }
-        else if (root.token.type === Type_1.Type.DIV) {
+        else if (root.token.type === Constants_1.Type.DIV) {
             return this.visit(root.left) / this.visit(root.right);
         }
-        else if (root.token.type === Type_1.Type.MUL) {
+        else if (root.token.type === Constants_1.Type.MUL) {
             return this.visit(root.left) * this.visit(root.right);
         }
     };
     Interpreter.prototype.visitNum = function (root) {
         return parseInt(root.token.value);
     };
+    Interpreter.prototype.visitUnaryOp = function (root) {
+        if (root.token.type === Constants_1.Type.PLUS) {
+            return this.visit(root.expr);
+        }
+        return -this.visit(root.expr);
+    };
     return Interpreter;
 }(NodeVisitor_1.default));
-var lexer = new Lexer_1.default(" (5 + 3) * 12 / 3");
+var program = "BEGIN\n" +
+    "    BEGIN\n" +
+    "        number := 2;\n" +
+    "        a := number;\n" +
+    "        b := 10 * a + 10 * number / 4;\n" +
+    "        c := a - - b;\n" +
+    "    END;\n" +
+    "    x := 11;\n" +
+    "END.";
+var lexer = new Lexer_1.default(program);
+var tokens = lexer.getTokens();
+console.log(tokens.length, tokens);
 var parser = new Parser_1.default(lexer);
-var interpreter = new Interpreter(parser);
-console.log(interpreter.interpret());
+// console.log(parser.parse());
+// let interpreter = new Interpreter(parser);
+// console.log(interpreter.interpret());

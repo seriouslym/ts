@@ -1,10 +1,9 @@
-import {Type} from "./Type";
-import Token from "./Token";
-import {isNumber} from "./utils";
-import AstNode, {BinOp, Num} from "./Ast";
+import {Type} from "./Constants";
+import {BinOp, Num, UnaryOp} from "./AstNode";
 import Lexer from "./Lexer";
 import Parser from "./Parser";
 import NodeVisitor from "./NodeVisitor";
+import {isAlpha} from "./utils";
 
 //  解析parser 产生ast 得到表达式的结果
 //
@@ -36,13 +35,33 @@ class Interpreter extends NodeVisitor{
         return parseInt(root.token.value);
     }
 
+    visitUnaryOp(root: UnaryOp): number {
+        if (root.token.type === Type.PLUS){
+            return this.visit(root.expr);
+        }
+        return -this.visit(root.expr);
+    }
+
 
 }
 
-let lexer = new Lexer(" (5 + 3) * 12 / 3");
+let program  = "BEGIN\n" +
+    "    BEGIN\n" +
+    "        number := 2;\n" +
+    "        a := number;\n" +
+    "        b := 10 * a + 10 * number / 4;\n" +
+    "        c := a - - b;\n" +
+    "    END;\n" +
+    "    x := 11;\n" +
+    "END."
+let lexer = new Lexer(program);
+let tokens = lexer.getTokens();
+console.log(tokens.length, tokens);
 let parser = new Parser(lexer);
-let interpreter = new Interpreter(parser);
-console.log(interpreter.interpret());
+// console.log(parser.parse());
+// let interpreter = new Interpreter(parser);
+// console.log(interpreter.interpret());
+
 
 
 
