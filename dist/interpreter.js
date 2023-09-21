@@ -1,133 +1,57 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Type_1 = require("./Type");
-var Token_1 = require("./Token");
-var utils_1 = require("./utils");
-var Ast_1 = require("./Ast");
-var Interpreter = /** @class */ (function () {
-    function Interpreter(text) {
-        this.text = text;
-        this.pos = 0;
-        this.currentChar = this.text.charAt(this.pos);
-        this.currentToken = this.getNextToken();
+var Lexer_1 = require("./Lexer");
+var Parser_1 = require("./Parser");
+var NodeVisitor_1 = require("./NodeVisitor");
+//  解析parser 产生ast 得到表达式的结果
+//
+var Interpreter = /** @class */ (function (_super) {
+    __extends(Interpreter, _super);
+    function Interpreter(parser) {
+        var _this = _super.call(this) || this;
+        _this.parser = parser;
+        return _this;
     }
-    Interpreter.prototype.advance = function () {
-        this.pos++;
-        if (this.pos >= this.text.length) {
-            this.currentChar = null;
+    Interpreter.prototype.interpret = function () {
+        var root = this.parser.expr();
+        return this.visit(root);
+    };
+    Interpreter.prototype.visitBinOp = function (root) {
+        if (root.token.type === Type_1.Type.MINUS) {
+            return this.visit(root.left) - this.visit(root.right);
         }
-        else {
-            this.currentChar = this.text.charAt(this.pos);
+        else if (root.token.type === Type_1.Type.PLUS) {
+            return this.visit(root.left) + this.visit(root.right);
+        }
+        else if (root.token.type === Type_1.Type.DIV) {
+            return this.visit(root.left) / this.visit(root.right);
+        }
+        else if (root.token.type === Type_1.Type.MUL) {
+            return this.visit(root.left) * this.visit(root.right);
         }
     };
-    Interpreter.prototype.skipWhitespace = function () {
-        while (this.pos !== null && this.currentChar === ' ') {
-            this.advance();
-        }
-    };
-    Interpreter.prototype.getNextToken = function () {
-        while (this.currentChar != null) {
-            if (this.currentChar === ' ') {
-                this.skipWhitespace();
-                continue;
-            }
-            else if ((0, utils_1.isNumber)(this.currentChar)) {
-                var start = this.pos;
-                while (this.currentChar !== null && (0, utils_1.isNumber)(this.currentChar)) {
-                    this.advance();
-                }
-                return new Token_1.default(Type_1.Type.INTEGER, this.text.slice(start, this.pos));
-            }
-            else if (this.currentChar === '+') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.PLUS, "+");
-            }
-            else if (this.currentChar === '-') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.MINUS, "-");
-            }
-            else if (this.currentChar === '*') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.MUL, "*");
-            }
-            else if (this.currentChar === '/') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.DIV, "/");
-            }
-            else if (this.currentChar === '(') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.LEFT_BRACKET, '(');
-            }
-            else if (this.currentChar === ')') {
-                this.advance();
-                return new Token_1.default(Type_1.Type.RIGHT_BRACKET, ')');
-            }
-            throw new Error("Invalid Character ".concat(this.pos, " ").concat(this.currentChar));
-        }
-        return new Token_1.default(Type_1.Type.EOF, null);
-    };
-    // getTokens(): Token[] {
-    //     let res: Token[] = [];
-    //     while (this.currentChar !== null) {
-    //         res.push(this.getNextToken());
-    //     }
-    //     return res;
-    // }
-    Interpreter.prototype.eat = function (type) {
-        if (this.currentToken.type === type) {
-            this.currentToken = this.getNextToken();
-        }
-        else {
-            throw new Error("parse error");
-        }
-    };
-    Interpreter.prototype.factor = function () {
-        var token = this.currentToken;
-        try {
-            if (token.type === Type_1.Type.INTEGER) {
-                this.eat(Type_1.Type.INTEGER);
-                return new Ast_1.default(token);
-            }
-            else if (token.type === Type_1.Type.LEFT_BRACKET) {
-                this.eat(Type_1.Type.LEFT_BRACKET);
-                var node = this.expr();
-                this.eat(Type_1.Type.RIGHT_BRACKET);
-                return node;
-            }
-        }
-        catch (e) {
-            console.log(e);
-        }
-    };
-    Interpreter.prototype.term = function () {
-        var node = this.factor();
-        while ([Type_1.Type.MUL, Type_1.Type.DIV].indexOf(this.currentToken.type) !== -1) {
-            var token = this.currentToken;
-            if (this.currentToken.type === Type_1.Type.MUL) {
-                this.eat(Type_1.Type.MUL);
-            }
-            else {
-                this.eat(Type_1.Type.DIV);
-            }
-            node = new Ast_1.default(token, node, this.factor());
-        }
-        return node;
-    };
-    Interpreter.prototype.expr = function () {
-        var node = this.term();
-        while ([Type_1.Type.PLUS, Type_1.Type.MINUS].indexOf(this.currentToken.type) !== -1) {
-            var token = this.currentToken;
-            if (this.currentToken.type === Type_1.Type.PLUS) {
-                this.eat(Type_1.Type.PLUS);
-            }
-            else {
-                this.eat(Type_1.Type.MINUS);
-            }
-            node = new Ast_1.default(token, node, this.term());
-        }
-        return node;
+    Interpreter.prototype.visitNum = function (root) {
+        return parseInt(root.token.value);
     };
     return Interpreter;
-}());
-var interpreter = new Interpreter("1 - 2 * 2    ");
-console.log(interpreter.expr());
+}(NodeVisitor_1.default));
+var lexer = new Lexer_1.default(" (5 + 3) * 12 / 3");
+var parser = new Parser_1.default(lexer);
+var interpreter = new Interpreter(parser);
+console.log(interpreter.interpret());
