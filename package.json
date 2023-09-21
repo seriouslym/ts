@@ -2,7 +2,8 @@
   "name": "ts",
   "version": "1.0.0",
   "scripts": {
-    "start": "tsc && node ./dist/interpreter"
+    "start": "tsc && node ./dist/interpreter",
+    "test": "tsc test/test.ts && node ./test/test"
   },
   "dependencies": {
   }
