@@ -47,12 +47,14 @@ export default class Parser {
     }
     term(): AstNode {
         let node = this.factor();
-        while ([Type.MUL, Type.DIV].indexOf(this.currentToken.type) !== -1) {
+        while ([Type.MUL, Type.DIV, Type.DIVIDE].indexOf(this.currentToken.type) !== -1) {
             let token = this.currentToken;
             if (this.currentToken.type === Type.MUL) {
                 this.eat(Type.MUL);
-            } else {
+            } else if (this.currentToken.type === Type.DIV){
                 this.eat(Type.DIV);
+            } else {
+                this.eat(Type.DIVIDE);
             }
             node = new BinOp(token, node, this.factor());
         }

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "tsc && node ./dist/interpreter",
-    "test": "tsc test/test.ts && node ./test/test"
+    "test": "tsc && node ./dist/test/test"
   },
   "dependencies": {
   }

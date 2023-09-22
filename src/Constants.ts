@@ -4,7 +4,8 @@ export enum Type {
     MINUS = "MINUS",
     PLUS = "PLUS",
     MUL = "MUL",
-    DIV = "DIV",
+    DIV = "DIV",   // 整除
+    DIVIDE = "DIVIDE", // 除
     INTEGER = "INTEGER",
     EOF = "EOF",
     LEFT_BRACKET = "LEFT_BRACKET",
@@ -19,7 +20,8 @@ export enum Type {
 
 let RESERVED_KEYWORDS = {
     'BEGIN': new Token(Type.BEGIN, "BEGIN"),
-    'END': new Token(Type.END, "END")
+    'END': new Token(Type.END, "END"),
+    'DIV': new Token(Type.DIV, "DIV"),
 }
 export {
     RESERVED_KEYWORDS

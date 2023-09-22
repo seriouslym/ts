@@ -37,7 +37,7 @@ export default class Lexer {
         while (this.currentChar !== null && isAlpha(this.currentChar)) {
             this.advance();
         }
-        return this.text.slice(start, this.pos);
+        return this.text.slice(start, this.pos).toUpperCase();
     }
     // 查看下一个pos位置的字符，但pos并不增加
     peek(): string {
@@ -77,7 +77,7 @@ export default class Lexer {
                 return new Token(Type.MUL, "*");
             } else if (this.currentChar === '/') {
                 this.advance();
-                return new Token(Type.DIV, "/");
+                return new Token(Type.DIVIDE, "/");
             } else if (this.currentChar === '(') {
                 this.advance();
                 return new Token(Type.LEFT_BRACKET, '(');

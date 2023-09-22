@@ -1,16 +1,14 @@
 import {Type} from "./Constants";
 import AstNode, {Assign, BinOp, Compound, NoOp, Num, UnaryOp, Var} from "./AstNode";
-import Lexer from "./Lexer";
 import Parser from "./Parser";
 import NodeVisitor from "./NodeVisitor";
-import {isAlpha} from "./utils";
 
 //  解析parser 产生ast 得到表达式的结果
 // 定义一个value为number类型对象
 type variablePool = {
     [key: string]: number;
 }
-class Interpreter extends NodeVisitor{
+export class Interpreter extends NodeVisitor{
     parser: Parser
     GLOBAL_SCOPE: variablePool;
     constructor(parser: Parser) {
@@ -19,9 +17,10 @@ class Interpreter extends NodeVisitor{
         this.GLOBAL_SCOPE = {};
     }
 
-    interpret(): number {
+    interpret(): AstNode {
         let root = this.parser.program();
-        return this.visit(root);
+        this.visit(root);
+        return root;
     }
 
     visitBinOp(root: BinOp): number {
@@ -30,9 +29,11 @@ class Interpreter extends NodeVisitor{
         } else if (root.token.type === Type.PLUS) {
             return this.visit(root.left) + this.visit(root.right);
         } else if (root.token.type === Type.DIV) {
-            return this.visit(root.left) / this.visit(root.right);
+            return Math.floor(this.visit(root.left) / this.visit(root.right));
         } else if (root.token.type === Type.MUL) {
             return this.visit(root.left) * this.visit(root.right);
+        } else if (root.token.type === Type.DIVIDE) {
+            return this.visit(root.left) / this.visit(root.right);
         }
     }
 
@@ -72,25 +73,6 @@ class Interpreter extends NodeVisitor{
 
 
 }
-
-let program  = "BEGIN\n" +
-    "    BEGIN\n" +
-    "        number := 2;\n" +
-    "        a := number;\n" +
-    "        b := 10 * a + 10 * number / 4;\n" +
-    "        c := a - - b;\n" +
-    "    END;\n" +
-    "    x := 11;\n" +
-    "END."
-let lexer = new Lexer(program);
-let tokens = lexer.getTokens();
-console.log(tokens.length, tokens);
-let parser = new Parser(lexer);
-
-// console.log(parser.parse());
-let interpreter = new Interpreter(parser);
-interpreter.interpret();
-console.log(interpreter.GLOBAL_SCOPE);
 
 
 
