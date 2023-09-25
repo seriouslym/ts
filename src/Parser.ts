@@ -1,7 +1,7 @@
 import Lexer from "./Lexer";
 import Token from "./Token";
 import {Type} from "./Constants";
-import AstNode, {Assign, BinOp, Compound, NoOp, Num, UnaryOp, Var} from "./AstNode";
+import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, TypeNode, UnaryOp, Var, VarDecl} from "./AstNode";
 
 // 根据tokenizer得到的token 进行parse得到ast
 export default class Parser {
@@ -24,8 +24,11 @@ export default class Parser {
     factor(): AstNode {
         let token = this.currentToken;
         try {
-            if (token.type === Type.INTEGER) {
-                this.eat(Type.INTEGER);
+            if (token.type === Type.INTEGER_CONST) {
+                this.eat(Type.INTEGER_CONST);
+                return new Num(token);
+            } else if (token.type === Type.REAL_CONST) {
+                this.eat(Type.REAL_CONST);
                 return new Num(token);
             } else if (token.type === Type.LEFT_BRACKET) {
                 this.eat(Type.LEFT_BRACKET);
@@ -75,20 +78,67 @@ export default class Parser {
     }
 
     /**
-     * compound dot
+     * PROGRAM variable semi block dot
      */
     program(): AstNode {
-        let node = this.compoundStatement();
+        this.eat(Type.PROGRAM);
+        // 获取pascal程序名称
+        let programName = this.variable().token.value;
+        this.eat(Type.SEMI);
+        let blockNode = this.block();
         this.eat(Type.DOT);
-        return node;
+        return new Program(programName, blockNode);
     }
+    //
+    block(): Block {
+        let declarations: VarDecl[] = this.declarations();
+        let compound = this.compoundStatement();
+        return new Block(declarations, compound);
+    }
+    // VAR (variable_declaration SEMI)+ | empty
+    // var a,b,c : integer;
+    declarations(): VarDecl[] {
+        let res: VarDecl[] = [];
+        if (this.currentToken.type === Type.VAR) {
+            this.eat(Type.VAR);
+            // @ts-ignore
+            while (this.currentToken.type === Type.ID) {
+                res = [...res, ...this.variableDeclaration()];
+                this.eat(Type.SEMI);
+            }
+        }
+        return res;
+    }
+    // ID (COMMA ID)* COLON type
+    //
+    variableDeclaration(): VarDecl[] {
+        let variables: Var[] = [this.variable()];
+        while (this.currentToken.type === Type.COMMA) {
+            this.eat(Type.COMMA);
+            variables.push(this.variable());
+        }
+        this.eat(Type.COLON);
+        let type = this.typeSpec();
+        return variables.map(item => {
+            return new VarDecl(item, type);
+        })
 
+    }
+    typeSpec(): TypeNode {
+        let type = this.currentToken;
+        if (this.currentToken.type === Type.INTEGER) {
+            this.eat(Type.INTEGER);
+        } else {
+            this.eat(Type.REAL);
+        }
+        return new TypeNode(type);
+    }
     /**
      * BEGIN
      *     statements
      * END.
      */
-    compoundStatement(): AstNode{
+    compoundStatement(): Compound{
         try {
             this.eat(Type.BEGIN);
             let node = this.statementList();
@@ -153,7 +203,7 @@ export default class Parser {
         }
     }
 
-    variable(): AstNode {
+    variable(): Var {
         try {
             let node = new Var(this.currentToken);
             this.eat(Type.ID);

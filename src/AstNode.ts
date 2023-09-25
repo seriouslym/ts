@@ -62,3 +62,40 @@ export class NoOp extends AstNode {
         super(null);
     }
 }
+
+export class Program extends AstNode {
+    name: string;
+    block: Block;
+    constructor(name: string, block: Block) {
+        super(null);
+        this.name = name;
+        this.block = block;
+    }
+}
+
+export class Block extends AstNode {
+    constructor(declarations: VarDecl[], compound: Compound) {
+        super(null);
+        this.declarations = declarations;
+        this.compound = compound;
+    }
+    declarations: VarDecl[]; // 声明语句
+    compound: Compound; // 复合语句
+
+}
+export class VarDecl extends AstNode {
+    varNode: Var;
+    typeNode: TypeNode;
+    constructor(varNode: Var, typeNode: TypeNode) {
+        super(null);
+        this.varNode = varNode;
+        this.typeNode = typeNode;
+    }
+}
+export class TypeNode extends AstNode {
+    // Token(Type.REAL, "REAL")
+    // Token(Type.INTEGER, "INTEGER")
+    constructor(token: Token) {
+        super(token);
+    }
+}

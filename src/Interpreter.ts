@@ -19,7 +19,7 @@ export class Interpreter extends NodeVisitor{
 
     interpret(): AstNode {
         let root = this.parser.program();
-        this.visit(root);
+        // this.visit(root);
         return root;
     }
 

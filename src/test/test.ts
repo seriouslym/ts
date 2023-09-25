@@ -1,4 +1,4 @@
-import AstNode, {Assign, BinOp, Compound, Num, UnaryOp, Var} from "../AstNode";
+import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../AstNode";
 import Lexer from "../Lexer";
 import Parser from "../Parser";
 import {Interpreter} from "../Interpreter";
@@ -34,15 +34,15 @@ function layer(root: AstNode): void{
         idx++;
     }
 }
-let program  = "begin\n" +
-    "    BEGIN\n" +
-    "        number := 2;\n" +
-    "        a := number;\n" +
-    "        b := 10 * a + 10 * number div 4;\n" +
-    "        c := a / 3;\n" +
-    "    END;\n" +
-    "    x := 11;\n" +
-    "end."
+let program  = "PROGRAM Part10AST;\n" +
+    "VAR\n" +
+    "   a, b : INTEGER;\n" +
+    "   y    : REAL;\n" +
+    "BEGIN {Part10AST}\n" +
+    "   a := 2;\n" +
+    "   b := 10 * a + 10 * a DIV 4;\n" +
+    "   y := 20 / 7 + 3.14;\n" +
+    "END.  {Part10AST}"
 let lexer = new Lexer(program);
 console.log(lexer.getTokens());
 let tokens = lexer.getTokens();
@@ -50,9 +50,12 @@ let parser = new Parser(lexer);
 
 // console.log(parser.parse());
 let interpreter = new Interpreter(parser);
-let node = interpreter.interpret();
-console.log(node)
+let node = interpreter.interpret() as Program;
+node.block.declarations.forEach((v, i) => {
+    console.log(v)
+})
 
-console.log(interpreter.GLOBAL_SCOPE);
+console.log(interpreter.GLOBAL_SCOPE)
+// console.log(interpreter.GLOBAL_SCOPE);
 
 

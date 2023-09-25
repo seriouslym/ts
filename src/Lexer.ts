@@ -25,13 +25,29 @@ export default class Lexer {
             this.advance();
         }
     }
-    integer(): string {
+    // 解析 整数 或者浮点数
+    number(): Token {
         let start = this.pos;
         while (this.currentChar !== null && isNumber(this.currentChar)) {
             this.advance();
         }
-        return this.text.slice(start, this.pos);
+        if (this.currentChar === '.') {
+            this.advance();
+            while (this.currentChar !== null && isNumber(this.currentChar)) {
+                this.advance();
+            }
+            return new Token(Type.REAL_CONST, this.text.slice(start, this.pos));
+        }
+        return new Token(Type.INTEGER_CONST, this.text.slice(start, this.pos));;
     }
+    // 忽略pascal注释 {这是注释}
+    skipComment(): void {
+        while (this.currentChar !== '}') {
+            this.advance();
+        }
+        this.advance();
+    }
+    // 解析变量名
     id(): string {
         let start = this.pos;
         while (this.currentChar !== null && isAlpha(this.currentChar)) {
@@ -51,11 +67,15 @@ export default class Lexer {
             if (this.currentChar === ' ' || this.currentChar === '\n') {
                 this.skipWhitespace();
                 continue;
-            } else if (isAlpha(this.currentChar)) {
+            } else if (this.currentChar === '{') {
+                this.advance();
+                this.skipComment();
+                continue;
+            } else if (isAlpha(this.currentChar, true)) {
                 let id = this.id();
                 return RESERVED_KEYWORDS[id] ?? new Token(Type.ID, id);
             } else if (isNumber(this.currentChar)) {
-                return new Token(Type.INTEGER, this.integer());
+                return this.number();
             } else if (this.currentChar === ':' && this.peek() === '=') {
                 this.advance();
                 this.advance();
@@ -84,6 +104,12 @@ export default class Lexer {
             } else if (this.currentChar === ')') {
                 this.advance();
                 return new Token(Type.RIGHT_BRACKET, ')')
+            } else if (this.currentChar === ':') {
+                this.advance();
+                return new Token(Type.COLON, ':');
+            } else if (this.currentChar === ',') {
+                this.advance();
+                return new Token(Type.COMMA, ',');
             }
             throw new Error(`Invalid Character ${this.pos} ${this.currentChar}`);
         }
