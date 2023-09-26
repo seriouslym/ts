@@ -1,0 +1,116 @@
+digraph astgraph { 
+node [shape=circle, fontsize=12, fontname="Courier", height=.1]; 
+ranksep=.3;
+edge [arrowsize=.5]
+node1 [label="Program-PART10"]
+node1 -> node2
+node2 [label="Block"]
+node2 -> node3
+node3 [label="VarDecl"]
+node3 -> node4
+node4 [label="NUMBER"]
+node3 -> node6
+node6 [label="INTEGER"]
+node2 -> node8
+node8 [label="VarDecl"]
+node8 -> node9
+node9 [label="A"]
+node8 -> node11
+node11 [label="INTEGER"]
+node2 -> node13
+node13 [label="VarDecl"]
+node13 -> node14
+node14 [label="B"]
+node13 -> node16
+node16 [label="INTEGER"]
+node2 -> node18
+node18 [label="VarDecl"]
+node18 -> node19
+node19 [label="C"]
+node18 -> node21
+node21 [label="INTEGER"]
+node2 -> node23
+node23 [label="VarDecl"]
+node23 -> node24
+node24 [label="X"]
+node23 -> node26
+node26 [label="INTEGER"]
+node2 -> node28
+node28 [label="VarDecl"]
+node28 -> node29
+node29 [label="Y"]
+node28 -> node31
+node31 [label="INTEGER"]
+node2 -> node33
+node33 [label="Compound"]
+node33 -> node34
+node34 [label="Compound"]
+node34 -> node35
+node35 [label=":="]
+node35 -> node36
+node36 [label="NUMBER"]
+node35 -> node38
+node38 [label="2"]
+node34 -> node40
+node40 [label=":="]
+node40 -> node41
+node41 [label="A"]
+node40 -> node43
+node43 [label="NUMBER"]
+node34 -> node45
+node45 [label=":="]
+node45 -> node46
+node46 [label="B"]
+node45 -> node48
+node48 [label="+"]
+node48 -> node49
+node49 [label="*"]
+node49 -> node50
+node50 [label="10"]
+node49 -> node52
+node52 [label="A"]
+node48 -> node54
+node54 [label="DIV"]
+node54 -> node55
+node55 [label="*"]
+node55 -> node56
+node56 [label="10"]
+node55 -> node58
+node58 [label="NUMBER"]
+node54 -> node60
+node60 [label="4"]
+node34 -> node62
+node62 [label=":="]
+node62 -> node63
+node63 [label="C"]
+node62 -> node65
+node65 [label="-"]
+node65 -> node66
+node66 [label="A"]
+node65 -> node68
+node68 [label="Unary-"]
+node68 -> node69
+node69 [label="B"]
+node33 -> node71
+node71 [label=":="]
+node71 -> node72
+node72 [label="X"]
+node71 -> node74
+node74 [label="11"]
+node33 -> node76
+node76 [label=":="]
+node76 -> node77
+node77 [label="Y"]
+node76 -> node79
+node79 [label="+"]
+node79 -> node80
+node80 [label="/"]
+node80 -> node81
+node81 [label="20"]
+node80 -> node83
+node83 [label="7"]
+node79 -> node85
+node85 [label="3.14"]
+node33 -> node87
+node87 [label="NoOp"]
+}

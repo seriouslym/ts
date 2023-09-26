@@ -1,5 +1,5 @@
 import {Type} from "./Constants";
-import AstNode, {Assign, BinOp, Compound, NoOp, Num, UnaryOp, Var} from "./AstNode";
+import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, UnaryOp, Var} from "./AstNode";
 import Parser from "./Parser";
 import NodeVisitor from "./NodeVisitor";
 
@@ -17,10 +17,9 @@ export class Interpreter extends NodeVisitor{
         this.GLOBAL_SCOPE = {};
     }
 
-    interpret(): AstNode {
+    interpret(): void {
         let root = this.parser.program();
-        // this.visit(root);
-        return root;
+        this.visit(root);
     }
 
     visitBinOp(root: BinOp): number {
@@ -38,7 +37,7 @@ export class Interpreter extends NodeVisitor{
     }
 
     visitNum(root: Num): number {
-        return parseInt(root.token.value);
+        return Number(root.token.value);
     }
 
     visitUnaryOp(root: UnaryOp): number {
@@ -69,6 +68,23 @@ export class Interpreter extends NodeVisitor{
             throw new Error(`${varName} not defined`);
         }
         return value;
+    }
+
+    visitBlock(root: Block): void {
+        for (let declaration of root.declarations) {
+            this.visit(declaration);
+        }
+        this.visit(root.compound);
+    }
+
+    visitProgram(root: Program): void {
+        this.visit(root.block);
+    }
+
+    visitType(root: AstNode): void {
+    }
+
+    visitVarDecl(root: AstNode): void {
     }
 
 

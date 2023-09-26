@@ -1,4 +1,4 @@
-import AstNode, {Assign, BinOp, Compound, NoOp, Num, UnaryOp, Var} from "./AstNode";
+import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, TypeNode, UnaryOp, Var, VarDecl} from "./AstNode";
 import {Type} from "./Constants";
 
 export default abstract class NodeVisitor{
@@ -17,6 +17,14 @@ export default abstract class NodeVisitor{
             return this.visitAssign(root);
         } else if (root instanceof Var) {
             return this.visitVar(root);
+        } else if (root instanceof Program) {
+            return this.visitProgram(root);
+        } else if (root instanceof Block) {
+            return this.visitBlock(root);
+        } else if (root instanceof TypeNode) {
+            return this.visitType(root);
+        } else if (root instanceof VarDecl) {
+            return this.visitVarDecl(root);
         }
     }
     abstract visitBinOp(root: AstNode): number;
@@ -26,4 +34,8 @@ export default abstract class NodeVisitor{
     abstract visitNoOp(root: AstNode): void;
     abstract visitAssign(root: AstNode): void;
     abstract visitVar(root: AstNode): number;
+    abstract visitProgram(root: AstNode): void;
+    abstract visitBlock(root: AstNode): void;
+    abstract visitVarDecl(root: AstNode): void;
+    abstract visitType(root: AstNode): void;
 }

@@ -1,5 +1,5 @@
 import Token from "./Token";
-import {isAlpha, isNumber} from "./utils";
+import {isAlpha, isEscapeChar, isNumber} from "./Utils";
 import {RESERVED_KEYWORDS, Type} from "./Constants";
 
 // 也可以称为 Tokenizer
@@ -21,7 +21,7 @@ export default class Lexer {
         }
     }
     skipWhitespace(): void {
-        while (this.pos !== null && (this.currentChar === ' ' || this.currentChar === '\n')) {
+        while (this.currentChar !== null && isEscapeChar(this.currentChar)) {
             this.advance();
         }
     }
@@ -38,7 +38,7 @@ export default class Lexer {
             }
             return new Token(Type.REAL_CONST, this.text.slice(start, this.pos));
         }
-        return new Token(Type.INTEGER_CONST, this.text.slice(start, this.pos));;
+        return new Token(Type.INTEGER_CONST, this.text.slice(start, this.pos));
     }
     // 忽略pascal注释 {这是注释}
     skipComment(): void {
@@ -64,7 +64,7 @@ export default class Lexer {
     }
     getNextToken(): Token {
         while (this.currentChar != null) {
-            if (this.currentChar === ' ' || this.currentChar === '\n') {
+            if (isEscapeChar(this.currentChar)) {
                 this.skipWhitespace();
                 continue;
             } else if (this.currentChar === '{') {
@@ -111,7 +111,8 @@ export default class Lexer {
                 this.advance();
                 return new Token(Type.COMMA, ',');
             }
-            throw new Error(`Invalid Character ${this.pos} ${this.currentChar}`);
+            let info = `Invalid Character ${this.currentChar} at ${this.pos} `;
+            throw new Error(info);
         }
         return new Token(Type.EOF, null);
     }

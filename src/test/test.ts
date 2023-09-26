@@ -2,8 +2,10 @@ import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../A
 import Lexer from "../Lexer";
 import Parser from "../Parser";
 import {Interpreter} from "../Interpreter";
-import {isAlpha} from "../utils";
-
+import {isAlpha, isEscapeChar} from "../Utils";
+import {GenerateDot} from "../GenerateDot";
+import * as fs from "fs";
+import * as path from "path";
 function layer(root: AstNode): void{
     let queue: AstNode[] = [root];
     let idx = 0;
@@ -34,28 +36,26 @@ function layer(root: AstNode): void{
         idx++;
     }
 }
-let program  = "PROGRAM Part10AST;\n" +
-    "VAR\n" +
-    "   a, b : INTEGER;\n" +
-    "   y    : REAL;\n" +
-    "BEGIN {Part10AST}\n" +
-    "   a := 2;\n" +
-    "   b := 10 * a + 10 * a DIV 4;\n" +
-    "   y := 20 / 7 + 3.14;\n" +
-    "END.  {Part10AST}"
+// node 需要用绝对路径
+let sourceCodePath = path.join(...[__dirname, "../../public/hello.pas"]);
+let program: string = fs.readFileSync(sourceCodePath).toString();
 let lexer = new Lexer(program);
-console.log(lexer.getTokens());
 let tokens = lexer.getTokens();
+// console.log(tokens)
 let parser = new Parser(lexer);
 
+let generateDot = new GenerateDot(parser);
+let targetPath = path.join(...[__dirname, '../../public/ast.dot']);
+fs.writeFileSync(targetPath, generateDot.dot());
+// console.log(generateDot.dot());
 // console.log(parser.parse());
-let interpreter = new Interpreter(parser);
-let node = interpreter.interpret() as Program;
-node.block.declarations.forEach((v, i) => {
-    console.log(v)
-})
-
-console.log(interpreter.GLOBAL_SCOPE)
+// let interpreter = new Interpreter(parser);
+// interpreter.interpret();
+// node.block.declarations.forEach((v, i) => {
+//     console.log(v)
+// })
+//
+// console.log(interpreter.GLOBAL_SCOPE)
 // console.log(interpreter.GLOBAL_SCOPE);
 
 
