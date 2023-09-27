@@ -1,11 +1,13 @@
-import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../AstNode";
+import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../ast/AstNode";
 import Lexer from "../Lexer";
 import Parser from "../Parser";
-import {Interpreter} from "../Interpreter";
+import {Interpreter} from "../ast/Interpreter";
 import {isAlpha, isEscapeChar} from "../Utils";
-import {GenerateDot} from "../GenerateDot";
+import {GenerateDot} from "../ast/GenerateDot";
 import * as fs from "fs";
 import * as path from "path";
+import {BuiltinTypeSymbol} from "../symbol/MySymbol";
+import {SymbolTableBuilder} from "../symbol/SymbolTableBuilder";
 function layer(root: AstNode): void{
     let queue: AstNode[] = [root];
     let idx = 0;
@@ -40,10 +42,14 @@ function layer(root: AstNode): void{
 let sourceCodePath = path.join(...[__dirname, "../../public/hello.pas"]);
 let program: string = fs.readFileSync(sourceCodePath).toString();
 let lexer = new Lexer(program);
-let tokens = lexer.getTokens();
-// console.log(tokens)
 let parser = new Parser(lexer);
+// let interpreter = new Interpreter(parser);
+// let symbolTableBuilder = new SymbolTableBuilder();
+// symbolTableBuilder.visit(root);
+// console.log(symbolTableBuilder.symbolTable.toString());
 
+// interpreter.visit(root);
+// console.log(interpreter.GLOBAL_SCOPE);
 let generateDot = new GenerateDot(parser);
 let targetPath = path.join(...[__dirname, '../../public/ast.dot']);
 fs.writeFileSync(targetPath, generateDot.dot());
@@ -57,5 +63,4 @@ fs.writeFileSync(targetPath, generateDot.dot());
 //
 // console.log(interpreter.GLOBAL_SCOPE)
 // console.log(interpreter.GLOBAL_SCOPE);
-
 

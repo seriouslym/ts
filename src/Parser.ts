@@ -1,7 +1,20 @@
 import Lexer from "./Lexer";
 import Token from "./Token";
 import {Type} from "./Constants";
-import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, TypeNode, UnaryOp, Var, VarDecl} from "./AstNode";
+import AstNode, {
+    Assign,
+    BinOp,
+    Block,
+    Compound,
+    DeclNode,
+    NoOp,
+    Num, ProcedureDecl,
+    Program,
+    TypeNode,
+    UnaryOp,
+    Var,
+    VarDecl
+} from "./ast/AstNode";
 
 // 根据tokenizer得到的token 进行parse得到ast
 export default class Parser {
@@ -91,14 +104,15 @@ export default class Parser {
     }
     //
     block(): Block {
-        let declarations: VarDecl[] = this.declarations();
+        let declarations: DeclNode[] = this.declarations();
         let compound = this.compoundStatement();
         return new Block(declarations, compound);
     }
-    // VAR (variable_declaration SEMI)+ | empty
-    // var a,b,c : integer;
-    declarations(): VarDecl[] {
-        let res: VarDecl[] = [];
+    // 1、VAR (variable_declaration SEMI)+ | empty     var a,b,c : integer;  变量声明
+    // 2、(PROCEDURE ID SEMI block SEMI)*              procedure p1; block semi; 过程声明
+    // 3、合并 VAR (variable_declaration SEMI)+ | (PROCEDURE ID SEMI block SEMI)* | empty
+    declarations(): DeclNode[]{
+        let res: DeclNode[] = [];
         if (this.currentToken.type === Type.VAR) {
             this.eat(Type.VAR);
             // @ts-ignore
@@ -106,6 +120,15 @@ export default class Parser {
                 res = [...res, ...this.variableDeclaration()];
                 this.eat(Type.SEMI);
             }
+        }
+        while (this.currentToken.type === Type.PROCEDURE) {
+            this.eat(Type.PROCEDURE);
+            let procedureName = this.currentToken.value;
+            this.eat(Type.ID);
+            this.eat(Type.SEMI);
+            let block = this.block();
+            res = [...res, new ProcedureDecl(procedureName, block)];
+            this.eat(Type.SEMI);
         }
         return res;
     }

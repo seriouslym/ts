@@ -1,7 +1,7 @@
-import {Type} from "./Constants";
+import {Type} from "../Constants";
 import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, UnaryOp, Var} from "./AstNode";
-import Parser from "./Parser";
-import NodeVisitor from "./NodeVisitor";
+import Parser from "../Parser";
+import NodeVisitor from "../NodeVisitor";
 
 //  解析parser 产生ast 得到表达式的结果
 // 定义一个value为number类型对象
@@ -85,6 +85,9 @@ export class Interpreter extends NodeVisitor{
     }
 
     visitVarDecl(root: AstNode): void {
+    }
+
+    visitProcedureDecl(root: AstNode): void {
     }
 
 

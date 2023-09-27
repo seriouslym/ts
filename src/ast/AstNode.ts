@@ -1,4 +1,4 @@
-import Token from "./Token";
+import Token from "../Token";
 
 export default class AstNode {
     token: Token;
@@ -74,12 +74,12 @@ export class Program extends AstNode {
 }
 
 export class Block extends AstNode {
-    constructor(declarations: VarDecl[], compound: Compound) {
+    constructor(declarations: DeclNode[], compound: Compound) {
         super(null);
         this.declarations = declarations;
         this.compound = compound;
     }
-    declarations: VarDecl[]; // 声明语句
+    declarations: DeclNode[]; // 声明语句 包含了变量声明 和 过程声明
     compound: Compound; // 复合语句
 
 }
@@ -92,6 +92,17 @@ export class VarDecl extends AstNode {
         this.typeNode = typeNode;
     }
 }
+export class ProcedureDecl extends AstNode {
+    procedureName: string;
+    block: Block;
+
+    constructor(procedureName: string, block: Block) {
+        super(null);
+        this.procedureName = procedureName;
+        this.block = block;
+    }
+}
+export type DeclNode = (VarDecl | ProcedureDecl)  // 联合类型
 export class TypeNode extends AstNode {
     // Token(Type.REAL, "REAL")
     // Token(Type.INTEGER, "INTEGER")

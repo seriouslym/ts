@@ -23,7 +23,7 @@ export enum Type {
     VAR = "VAR", // 关键字
     COLON = "COLON", // 冒号
     COMMA = "COMMA", // 逗号
-
+    PROCEDURE = "PROCEDURE",
 }
 
 let RESERVED_KEYWORDS = {
@@ -34,6 +34,7 @@ let RESERVED_KEYWORDS = {
     'BEGIN': new Token(Type.BEGIN, "BEGIN"),
     'END': new Token(Type.END, "END"),
     'DIV': new Token(Type.DIV, "DIV"),
+    'PROCEDURE': new Token(Type.PROCEDURE, "PROCEDURE"),
 }
 export {
     RESERVED_KEYWORDS

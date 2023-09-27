@@ -1,6 +1,18 @@
-import NodeVisitor from "./NodeVisitor";
-import AstNode, {Assign, BinOp, Block, Compound, NoOp, Num, Program, TypeNode, UnaryOp, VarDecl} from "./AstNode";
-import Parser from "./Parser";
+import NodeVisitor from "../NodeVisitor";
+import AstNode, {
+    Assign,
+    BinOp,
+    Block,
+    Compound,
+    NoOp,
+    Num,
+    ProcedureDecl,
+    Program,
+    TypeNode,
+    UnaryOp,
+    VarDecl
+} from "./AstNode";
+import Parser from "../Parser";
 
 export class GenerateDot extends NodeVisitor{
     parse: Parser;
@@ -119,5 +131,13 @@ export class GenerateDot extends NodeVisitor{
         this.visit(root);
         console.log(this.content)
         return this.header + this.content.join('\n') + this.footer;
+    }
+
+    visitProcedureDecl(root: ProcedureDecl): void {
+        let i = this.label;
+        this.content.push(`node${this.label} [label="ProceDel: ${root.procedureName}"]`);
+        this.label++;
+        this.content.push(`node${i} -> node${this.label}`);
+        this.visit(root.block);
     }
 }
