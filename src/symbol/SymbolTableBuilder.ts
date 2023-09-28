@@ -4,6 +4,7 @@ import AstNode, {Assign, BinOp, Block, Compound, NoOp, Program, UnaryOp, Var, Va
 import {SymbolTable} from "./SymbolTable";
 import {VarSymbol} from "./MySymbol";
 
+// 类型检查 未定义引用等检查 就是语义检查(合乎语法，但是在parser过程中并不能发现语义错误)
 export class SymbolTableBuilder extends NodeVisitor{
     symbolTable: SymbolTable;
     constructor() {
@@ -12,7 +13,7 @@ export class SymbolTableBuilder extends NodeVisitor{
     }
     visitAssign(root: Assign): void {
         let name = root.leftOp.token.value;
-        if (!this.symbolTable.lookup(name)) {
+        if (!this.symbolTable.get(name)) {
             throw new Error(`param ${name} not defined`);
         }
         this.visit(root.rightOp);
@@ -58,7 +59,7 @@ export class SymbolTableBuilder extends NodeVisitor{
 
     visitVar(root: Var): number {
         let name = root.token.value;
-        if (!this.symbolTable.lookup(name)) {
+        if (!this.symbolTable.get(name)) {
             throw new Error(`param ${name} not defined`);
         }
         return 0;
@@ -66,7 +67,7 @@ export class SymbolTableBuilder extends NodeVisitor{
 
     visitVarDecl(root: VarDecl): void {
         let typeName = root.typeNode.token.value;
-        let typeSymbol = this.symbolTable.lookup(typeName);
+        let typeSymbol = this.symbolTable.get(typeName);
         this.symbolTable.put(new VarSymbol(root.varNode.token.value, typeSymbol));
     }
 

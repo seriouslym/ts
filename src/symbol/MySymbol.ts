@@ -19,7 +19,7 @@ export class BuiltinTypeSymbol extends MySymbol {
         super(name, null);
     }
     toString(): string {
-        return this.name;
+        return `<${this.constructor.name}(name='${this.name}')>`
     }
 
 }
@@ -29,6 +29,6 @@ export class VarSymbol extends MySymbol {
         super(name, type);
     }
     toString(): string {
-        return `<${this.name}: ${this.type.name}>`
+        return `<${this.constructor.name}(name='${this.name}', type='${this.type.name}'>`
     }
 }

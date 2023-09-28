@@ -18,7 +18,7 @@ export enum Type {
     ID = "ID",
     DOT = '.',
     ASSIGN = "ASSIGN",
-    SEMI = 'SEMI',
+    SEMI = 'SEMI', // 分号
     PROGRAM = "PROGRAM", // pascal关键字
     VAR = "VAR", // 关键字
     COLON = "COLON", // 冒号

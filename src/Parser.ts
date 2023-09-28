@@ -8,7 +8,7 @@ import AstNode, {
     Compound,
     DeclNode,
     NoOp,
-    Num, ProcedureDecl,
+    Num, Param, ProcedureDecl,
     Program,
     TypeNode,
     UnaryOp,
@@ -113,6 +113,7 @@ export default class Parser {
     // 3、合并 VAR (variable_declaration SEMI)+ | (PROCEDURE ID SEMI block SEMI)* | empty
     declarations(): DeclNode[]{
         let res: DeclNode[] = [];
+        // 变量声明
         if (this.currentToken.type === Type.VAR) {
             this.eat(Type.VAR);
             // @ts-ignore
@@ -121,17 +122,60 @@ export default class Parser {
                 this.eat(Type.SEMI);
             }
         }
+        // 过程声明
         while (this.currentToken.type === Type.PROCEDURE) {
             this.eat(Type.PROCEDURE);
             let procedureName = this.currentToken.value;
             this.eat(Type.ID);
+            let params = this.formalParams();
+            console.log("procedure params", params);
+            // params.forEach(param => {
+            //     console.log(param.varNode.token.value, param.typeNode.token.value)
+            // })
             this.eat(Type.SEMI);
             let block = this.block();
-            res = [...res, new ProcedureDecl(procedureName, block)];
-            this.eat(Type.SEMI);
+            console.log("procedure block", block);
+            res = [...res, new ProcedureDecl(procedureName, block, params)];
+        }
+        // while (this.currentToken.type === Type.PROCEDURE) {
+        //     this.eat(Type.PROCEDURE);
+        //     let procedureName = this.currentToken.value;
+        //     this.eat(Type.ID);
+        //     this.eat(Type.SEMI);
+        //     let block = this.block();
+        //     res = [...res, new ProcedureDecl(procedureName, block, null)];
+        //     this.eat(Type.SEMI);
+        // }
+        return res;
+    }
+
+    formalParams(): Param[] {
+        let res: Param[] = null;
+        // console.log(res, this.currentToken);
+        if (this.currentToken.type === Type.LEFT_BRACKET) {
+            this.eat(Type.LEFT_BRACKET);
+            res = this.paramsList();
+            this.eat(Type.RIGHT_BRACKET);
         }
         return res;
     }
+    paramsList(): Param[] {
+        let res = this.param();
+        console.log("params", res)
+        while (this.currentToken.type === Type.SEMI) {
+            this.eat(Type.SEMI);
+            res = [...res, ...this.paramsList()];
+        }
+        return res;
+    }
+
+    param(): Param[] {
+        let res: VarDecl[] = this.variableDeclaration();
+        return res.map(v => new Param(v.varNode, v.typeNode));
+    }
+
+
+
     // ID (COMMA ID)* COLON type
     //
     variableDeclaration(): VarDecl[] {
@@ -167,6 +211,9 @@ export default class Parser {
             let node = this.statementList();
             this.eat(Type.END);
             let root = new Compound();
+            // if (this.currentToken.type === Type.SEMI) {
+            //     this.eat(Type.SEMI);
+            // }
             for (let i = 0; i < node.length; i++) {
                 root.children.push(node[i]);
             }

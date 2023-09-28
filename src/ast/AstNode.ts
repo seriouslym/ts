@@ -95,11 +95,13 @@ export class VarDecl extends AstNode {
 export class ProcedureDecl extends AstNode {
     procedureName: string;
     block: Block;
+    params: Param[];
 
-    constructor(procedureName: string, block: Block) {
+    constructor(procedureName: string, block: Block, params: Param[]) {
         super(null);
         this.procedureName = procedureName;
         this.block = block;
+        this.params = params;
     }
 }
 export type DeclNode = (VarDecl | ProcedureDecl)  // 联合类型
@@ -109,4 +111,16 @@ export class TypeNode extends AstNode {
     constructor(token: Token) {
         super(token);
     }
+}
+
+// 过程的参数
+export class Param extends AstNode {
+    varNode: Var;  // 参数本身
+    typeNode: TypeNode; // 参数类型
+    constructor(varNode: Var, typeNode: TypeNode) {
+        super(null);
+        this.varNode = varNode;
+        this.typeNode = typeNode;
+    }
+
 }
