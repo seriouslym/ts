@@ -136,6 +136,7 @@ export default class Parser {
             let block = this.block();
             console.log("procedure block", block);
             res = [...res, new ProcedureDecl(procedureName, block, params)];
+            this.eat(Type.SEMI);
         }
         // while (this.currentToken.type === Type.PROCEDURE) {
         //     this.eat(Type.PROCEDURE);
