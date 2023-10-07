@@ -1,17 +1,17 @@
-import NodeVisitor from "../NodeVisitor";
+import NodeVisitor from "./NodeVisitor";
 import AstNode, {
     Assign,
     BinOp,
     Block,
     Compound,
     NoOp,
-    Num,
+    Num, Param,
     ProcedureDecl,
     Program,
     TypeNode,
     UnaryOp,
     VarDecl
-} from "./AstNode";
+} from "../AstNode";
 import Parser from "../Parser";
 
 export class GenerateDot extends NodeVisitor{
@@ -116,9 +116,9 @@ export class GenerateDot extends NodeVisitor{
         this.label++;
     }
 
-    visitVarDecl(root: VarDecl): void {
+    visitVarDecl(root: VarDecl|Param): void {
         let i = this.label;
-        this.content.push(`node${this.label} [label="VarDecl"]`);
+        this.content.push(`node${this.label} [label="${root instanceof VarDecl ? "VarDecl" : "Param"}"]`);
         this.label++;
         this.content.push(`node${i} -> node${this.label}`);
         this.visit(root.varNode);
@@ -139,5 +139,15 @@ export class GenerateDot extends NodeVisitor{
         this.label++;
         this.content.push(`node${i} -> node${this.label}`);
         this.visit(root.block);
+        for (let j = 0; j < root.params.length; j++) {
+            this.label++;
+            this.content.push(`node${i} -> node${this.label}`);
+            this.visit(root.params[j]);
+        }
+    }
+
+    visitParams(root: Param) {
+        this.visitVarDecl(root);
+
     }
 }

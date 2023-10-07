@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "tsc && node ./dist/interpreter",
-    "test": "tsc && node ./dist/test/test"
+    "test": "tsc && node ./dist/test/test && dot -Tpng -o public/ast.png public/ast.dot"
   },
   "dependencies": {
     "@types/node": "^20.5.7"

@@ -1,6 +1,6 @@
 // 遍历Ast 通过符号表进行类型判断和定义检查
-import NodeVisitor from "../NodeVisitor";
-import AstNode, {Assign, BinOp, Block, Compound, NoOp, Program, UnaryOp, Var, VarDecl} from "../ast/AstNode";
+import NodeVisitor from "../core/NodeVisitor";
+import AstNode, {Assign, BinOp, Block, Compound, NoOp, Program, UnaryOp, Var, VarDecl} from "../AstNode";
 import {SymbolTable} from "./SymbolTable";
 import {VarSymbol} from "./MySymbol";
 
@@ -72,6 +72,9 @@ export class SymbolTableBuilder extends NodeVisitor{
     }
 
     visitProcedureDecl(root: AstNode): void {
+    }
+
+    visitParams(root: AstNode): void {
     }
 
 

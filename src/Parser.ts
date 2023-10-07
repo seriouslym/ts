@@ -14,7 +14,7 @@ import AstNode, {
     UnaryOp,
     Var,
     VarDecl
-} from "./ast/AstNode";
+} from "./AstNode";
 
 // 根据tokenizer得到的token 进行parse得到ast
 export default class Parser {
@@ -128,13 +128,13 @@ export default class Parser {
             let procedureName = this.currentToken.value;
             this.eat(Type.ID);
             let params = this.formalParams();
-            console.log("procedure params", params);
+            // console.log("procedure params", params);
             // params.forEach(param => {
             //     console.log(param.varNode.token.value, param.typeNode.token.value)
             // })
             this.eat(Type.SEMI);
             let block = this.block();
-            console.log("procedure block", block);
+            // console.log("procedure block", block);
             res = [...res, new ProcedureDecl(procedureName, block, params)];
             this.eat(Type.SEMI);
         }
@@ -162,7 +162,7 @@ export default class Parser {
     }
     paramsList(): Param[] {
         let res = this.param();
-        console.log("params", res)
+        // console.log("params", res)
         while (this.currentToken.type === Type.SEMI) {
             this.eat(Type.SEMI);
             res = [...res, ...this.paramsList()];

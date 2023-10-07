@@ -1,13 +1,14 @@
-import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../ast/AstNode";
+import AstNode, {Assign, BinOp, Compound, Num, Program, UnaryOp, Var} from "../AstNode";
 import Lexer from "../Lexer";
 import Parser from "../Parser";
-import {Interpreter} from "../Interpreter";
+import {Interpreter} from "../core/Interpreter";
 import {isAlpha, isEscapeChar} from "../Utils";
-import {GenerateDot} from "../ast/GenerateDot";
+import {GenerateDot} from "../core/GenerateDot";
 import * as fs from "fs";
 import * as path from "path";
 import {BuiltinTypeSymbol, VarSymbol} from "../symbol/MySymbol";
 import {SymbolTableBuilder} from "../symbol/SymbolTableBuilder";
+import {SemanticAnalyzer} from "../core/SemanticAnalyzer";
 function layer(root: AstNode): void{
     let queue: AstNode[] = [root];
     let idx = 0;
@@ -44,7 +45,7 @@ let program: string = fs.readFileSync(sourceCodePath).toString();
 let lexer = new Lexer(program);
 let parser = new Parser(lexer);
 // let interpreter = new Interpreter(parser);
-console.log(parser.program());
+// console.log(parser.program());
 // let symbolTableBuilder = new SymbolTableBuilder();
 // symbolTableBuilder.visit(parser.program());
 // console.log(symbolTableBuilder.symbolTable.toString());
@@ -66,3 +67,7 @@ console.log(parser.program());
 // console.log(interpreter.GLOBAL_SCOPE);
 
 
+
+// 语义分析test
+let semanticAnalyzer = new SemanticAnalyzer();
+semanticAnalyzer.visit(parser.program());

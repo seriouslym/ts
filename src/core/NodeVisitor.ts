@@ -4,15 +4,15 @@ import AstNode, {
     Block,
     Compound,
     NoOp,
-    Num,
+    Num, Param,
     ProcedureDecl,
     Program,
     TypeNode,
     UnaryOp,
     Var,
     VarDecl
-} from "./ast/AstNode";
-import {Type} from "./Constants";
+} from "../AstNode";
+import {Type} from "../Constants";
 
 export default abstract class NodeVisitor{
     visit(root: AstNode): any{
@@ -40,6 +40,8 @@ export default abstract class NodeVisitor{
             return this.visitVarDecl(root);
         } else if (root instanceof ProcedureDecl) {
             this.visitProcedureDecl(root);
+        } else if(root instanceof Param) {
+            this.visitParams(root);
         }
     }
     abstract visitBinOp(root: AstNode): number;
@@ -54,4 +56,5 @@ export default abstract class NodeVisitor{
     abstract visitVarDecl(root: AstNode): void;
     abstract visitType(root: AstNode): void;
     abstract visitProcedureDecl(root: AstNode): void;
+    abstract visitParams(root: AstNode): void;
 }

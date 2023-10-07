@@ -1,13 +1,10 @@
 program Main;
    var x, y: real;
 
-   procedure Alpha(a: Integer);
+   procedure Alpha(a : integer);
       var y : integer;
    begin
-      x := a + x + y;
-      begin
-        x := 2;
-      end
+      x := b + x + y;
    end;
 
 begin { Main }

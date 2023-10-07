@@ -1,4 +1,5 @@
 import {type} from "os";
+import {Param} from "../AstNode";
 
 // 与系统Symbol命名冲突
 export class MySymbol {
@@ -31,4 +32,16 @@ export class VarSymbol extends MySymbol {
     toString(): string {
         return `<${this.constructor.name}(name='${this.name}', type='${this.type.name}'>`
     }
+}
+
+export class ProcedureSymbol extends MySymbol {
+    params: VarSymbol[];  // 保存指向形参的Symbol
+    constructor(name: string, params: VarSymbol[] = []) {
+        super(name, null);
+        this.params = params;
+    }
+    toString(): string {
+        return `<${this.constructor.name}(name='${this.name}', parameters=[${this.params.toString()}]'>`;
+    }
+
 }

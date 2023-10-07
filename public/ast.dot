@@ -2,69 +2,83 @@ digraph astgraph {
 node [shape=circle, fontsize=12, fontname="Courier", height=.1]; 
 ranksep=.3;
 edge [arrowsize=.5]
-node1 [label="Program-PART12"]
+node1 [label="Program-MAIN"]
 node1 -> node2
 node2 [label="Block"]
 node2 -> node3
 node3 [label="VarDecl"]
 node3 -> node4
-node4 [label="A"]
+node4 [label="X"]
 node3 -> node6
-node6 [label="INTEGER"]
+node6 [label="REAL"]
 node2 -> node8
-node8 [label="ProceDel: P1"]
+node8 [label="VarDecl"]
 node8 -> node9
-node9 [label="Block"]
-node9 -> node10
-node10 [label="VarDecl"]
-node10 -> node11
-node11 [label="A"]
-node10 -> node13
-node13 [label="REAL"]
-node9 -> node15
+node9 [label="Y"]
+node8 -> node11
+node11 [label="REAL"]
+node2 -> node13
+node13 [label="ProceDel: ALPHA"]
+node13 -> node14
+node14 [label="Block"]
+node14 -> node15
 node15 [label="VarDecl"]
 node15 -> node16
-node16 [label="K"]
+node16 [label="Y"]
 node15 -> node18
 node18 [label="INTEGER"]
-node9 -> node20
-node20 [label="ProceDel: P2"]
+node14 -> node20
+node20 [label="Compound"]
 node20 -> node21
-node21 [label="Block"]
+node21 [label=":="]
 node21 -> node22
-node22 [label="VarDecl"]
-node22 -> node23
-node23 [label="A"]
-node22 -> node25
-node25 [label="INTEGER"]
-node21 -> node27
-node27 [label="VarDecl"]
-node27 -> node28
-node28 [label="Z"]
-node27 -> node30
-node30 [label="INTEGER"]
-node21 -> node32
+node22 [label="X"]
+node21 -> node24
+node24 [label="+"]
+node24 -> node25
+node25 [label="+"]
+node25 -> node26
+node26 [label="A"]
+node25 -> node28
+node28 [label="X"]
+node24 -> node30
+node30 [label="Y"]
+node20 -> node32
 node32 [label="Compound"]
 node32 -> node33
 node33 [label=":="]
 node33 -> node34
-node34 [label="Z"]
+node34 [label="X"]
 node33 -> node36
-node36 [label="777"]
+node36 [label="2"]
 node32 -> node38
 node38 [label="NoOp"]
-node9 -> node40
-node40 [label="Compound"]
+node13 -> node40
+node40 [label="Param"]
 node40 -> node41
-node41 [label="NoOp"]
-node2 -> node43
-node43 [label="Compound"]
-node43 -> node44
-node44 [label=":="]
-node44 -> node45
-node45 [label="A"]
-node44 -> node47
-node47 [label="10"]
-node43 -> node49
-node49 [label="NoOp"]
+node41 [label="A"]
+node40 -> node43
+node43 [label="INTEGER"]
+node13 -> node45
+node45 [label="Param"]
+node45 -> node46
+node46 [label="B"]
+node45 -> node48
+node48 [label="INTEGER"]
+node13 -> node50
+node50 [label="Param"]
+node50 -> node51
+node51 [label="C"]
+node50 -> node53
+node53 [label="INTEGER"]
+node13 -> node55
+node55 [label="Param"]
+node55 -> node56
+node56 [label="D"]
+node55 -> node58
+node58 [label="REAL"]
+node2 -> node60
+node60 [label="Compound"]
+node60 -> node61
+node61 [label="NoOp"]
 }
